@@ -15,9 +15,18 @@ unzip pdfjs-1.8.188-dist.zip -d pdfjs
 # tarballjs
 wget https://github.com/ankitrohatgi/tarballjs/archive/master.zip
 unzip master.zip -d tarballjs
+rm master.zip
 
-# numericjs
-mkdir -p numericjs
-cd numericjs
-wget http://www.numericjs.com/lib/numeric-1.2.6.min.js
+# emscripten
+wget https://github.com/juj/emsdk/archive/master.zip
+unzip master.zip
+mv emsdk-master emsdk
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
 cd ..
+rm master.zip
+
+# clean up downloaded packages
+rm *.zip
+

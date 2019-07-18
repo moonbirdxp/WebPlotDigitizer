@@ -1,9 +1,9 @@
 /*
-	WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-	Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+    Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-	This file is part of WebPlotDigitizer.
+    This file is part of WebPlotDigitizer.
 
     WebPlotDigitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -17,22 +17,20 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-
 */
 
 var wpd = wpd || {};
-wpd.acquireData = (function () {
-
+wpd.acquireData = (function() {
     var dataset, axes;
 
     function load() {
         dataset = getActiveDataset();
         axes = getAxes();
 
-        if(axes == null) {
-            wpd.messagePopup.show(wpd.gettext('dataset-no-calibration'), wpd.gettext('calibrate-dataset'));
-        } else {            
+        if (axes == null) {
+            wpd.messagePopup.show(wpd.gettext('dataset-no-calibration'),
+                wpd.gettext('calibrate-dataset'));
+        } else {
             wpd.graphicsWidget.removeTool();
             wpd.graphicsWidget.resetData();
             showSidebar();
@@ -42,7 +40,7 @@ wpd.acquireData = (function () {
             wpd.graphicsWidget.setRepainter(new wpd.DataPointsRepainter(axes, dataset));
 
             manualSelection();
-            
+
             wpd.graphicsWidget.forceHandlerRepaint();
             wpd.dataPointCounter.setCount(dataset.getCount());
         }
@@ -75,10 +73,12 @@ wpd.acquireData = (function () {
     }
 
     function clearAll() {
-        if(dataset.getCount() <= 0) {
+        if (dataset.getCount() <= 0) {
             return;
         }
-        wpd.okCancelPopup.show(wpd.gettext('clear-data-points'), wpd.gettext('clear-data-points-text'), confirmedClearAll, function() {});
+        wpd.okCancelPopup.show(wpd.gettext('clear-data-points'),
+            wpd.gettext('clear-data-points-text'), confirmedClearAll,
+            function() {});
     }
 
     function undo() {
@@ -87,7 +87,7 @@ wpd.acquireData = (function () {
         wpd.graphicsWidget.forceHandlerRepaint();
         wpd.dataPointCounter.setCount(dataset.getCount());
     }
- 
+
     function showSidebar() {
         wpd.sidebar.show('acquireDataSidebar');
         updateControlVisibility();
@@ -96,7 +96,7 @@ wpd.acquireData = (function () {
 
     function updateControlVisibility() {
         var $editLabelsBtn = document.getElementById('edit-data-labels');
-        if(axes instanceof wpd.BarAxes) {
+        if (axes instanceof wpd.BarAxes) {
             $editLabelsBtn.style.display = 'inline-block';
         } else {
             $editLabelsBtn.style.display = 'none';
@@ -112,29 +112,27 @@ wpd.acquireData = (function () {
     }
 
     function switchToolOnKeyPress(alphaKey) {
-        switch(alphaKey) {
-            case 'd': 
+        switch (alphaKey) {
+            case 'd':
                 deletePoint();
                 break;
-            case 'a': 
+            case 'a':
                 manualSelection();
                 break;
-            case 's': 
+            case 's':
                 adjustPoints();
                 break;
             case 'e':
                 editLabels();
                 break;
-            default: 
+            default:
                 break;
         }
     }
 
     function isToolSwitchKey(keyCode) {
-        if(wpd.keyCodes.isAlphabet(keyCode, 'a')
-            || wpd.keyCodes.isAlphabet(keyCode, 's')
-            || wpd.keyCodes.isAlphabet(keyCode, 'd')
-            || wpd.keyCodes.isAlphabet(keyCode, 'e')) {
+        if (wpd.keyCodes.isAlphabet(keyCode, 'a') || wpd.keyCodes.isAlphabet(keyCode, 's') ||
+            wpd.keyCodes.isAlphabet(keyCode, 'd') || wpd.keyCodes.isAlphabet(keyCode, 'e')) {
             return true;
         }
         return false;
@@ -149,20 +147,19 @@ wpd.acquireData = (function () {
         undo: undo,
         showSidebar: showSidebar,
         switchToolOnKeyPress: switchToolOnKeyPress,
-        isToolSwitchKey: isToolSwitchKey,        
+        isToolSwitchKey: isToolSwitchKey,
         editLabels: editLabels
     };
 })();
 
 wpd.dataPointLabelEditor = (function() {
-
     var ds, ptIndex, tool;
-    
+
     function show(dataset, pointIndex, initTool) {
         var pixel = dataset.getPixel(pointIndex),
             originalLabel = pixel.metadata[0],
             $labelField;
-        
+
         ds = dataset;
         ptIndex = pointIndex;
         tool = initTool;
@@ -179,8 +176,8 @@ wpd.dataPointLabelEditor = (function() {
     function ok() {
         var newLabel = document.getElementById('data-point-label-field').value;
 
-        if(newLabel != null && newLabel.length > 0) {
-            // set label 
+        if (newLabel != null && newLabel.length > 0) {
+            // set label
             ds.setMetadataAt(ptIndex, [newLabel]);
             // refresh graphics
             wpd.graphicsWidget.resetData();
@@ -198,9 +195,9 @@ wpd.dataPointLabelEditor = (function() {
     }
 
     function keydown(ev) {
-        if(wpd.keyCodes.isEnter(ev.keyCode)) {
+        if (wpd.keyCodes.isEnter(ev.keyCode)) {
             ok();
-        } else if(wpd.keyCodes.isEsc(ev.keyCode)) {
+        } else if (wpd.keyCodes.isEsc(ev.keyCode)) {
             cancel();
         }
         ev.stopPropagation();

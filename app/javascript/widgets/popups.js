@@ -1,9 +1,9 @@
 /*
-	WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-	Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+    Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-	This file is part of WebPlotDigitizer.
+    This file is part of WebPlotDigitizer.
 
     WebPlotDigitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -17,14 +17,11 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-
 */
 
 // Handle popup windows
 var wpd = wpd || {};
-wpd.popup = (function () {
-
+wpd.popup = (function() {
     let dragInfo = null;
     let $activeWindow = null;
 
@@ -33,27 +30,29 @@ wpd.popup = (function () {
         // Dim lights to make it obvious that these are modal dialog boxes.
         let shadowDiv = document.getElementById('shadow');
         shadowDiv.style.visibility = "visible";
-        
+
         // Display the popup
         let pWindow = document.getElementById(popupid);
         let screenWidth = parseInt(window.innerWidth, 10);
         let screenHeight = parseInt(window.innerHeight, 10);
         let pWidth = parseInt(pWindow.offsetWidth, 10);
         let pHeight = parseInt(pWindow.offsetHeight, 10);
-        let xPos = (screenWidth - pWidth)/2;
-        let yPos = (screenHeight - pHeight)/2;
+        let xPos = (screenWidth - pWidth) / 2;
+        let yPos = (screenHeight - pHeight) / 2;
         yPos = yPos > 60 ? 60 : yPos;
         pWindow.style.left = xPos + 'px';
         pWindow.style.top = yPos + 'px';
         pWindow.style.visibility = "visible";
 
         // Attach drag events to the header
-        for(let i = 0; i < pWindow.childNodes.length; i++) {
-            if(pWindow.childNodes[i].className === 'popupheading') {
+        for (let i = 0; i < pWindow.childNodes.length; i++) {
+            if (pWindow.childNodes[i].className === 'popupheading') {
                 pWindow.childNodes[i].addEventListener("mousedown", startDragging, false);
                 break;
             }
         }
+
+        window.addEventListener("keydown", handleKeydown, false);
 
         $activeWindow = pWindow;
     }
@@ -67,6 +66,8 @@ wpd.popup = (function () {
         pWindow.style.visibility = "hidden";
 
         removeDragMask();
+
+        window.removeEventListener("keydown", handleKeydown, false);
         $activeWindow = null;
     }
 
@@ -100,7 +101,7 @@ wpd.popup = (function () {
 
     function dragMouseUp(ev) {
         moveWindow(ev);
-        removeDragMask(); 
+        removeDragMask();
         ev.stopPropagation();
         ev.preventDefault();
     }
@@ -108,14 +109,14 @@ wpd.popup = (function () {
     function moveWindow(ev) {
         let newWindowX = (dragInfo.initialWindowX + ev.pageX - dragInfo.initialMouseX);
         let newWindowY = (dragInfo.initialWindowY + ev.pageY - dragInfo.initialMouseY);
-        let appWidth =  parseInt(document.body.offsetWidth, 10);
-        let appHeight =  parseInt(document.body.offsetHeight, 10);
+        let appWidth = parseInt(document.body.offsetWidth, 10);
+        let appHeight = parseInt(document.body.offsetHeight, 10);
         let windowWidth = parseInt($activeWindow.offsetWidth, 10);
         let windowHeight = parseInt($activeWindow.offsetHeight, 10);
 
         // move only up to a reasonable bound:
-        if(newWindowX + 0.7*windowWidth < appWidth && newWindowX > 0 && newWindowY > 0
-            && newWindowY + 0.5*windowHeight < appHeight) {
+        if (newWindowX + 0.7 * windowWidth < appWidth && newWindowX > 0 && newWindowY > 0 &&
+            newWindowY + 0.5 * windowHeight < appHeight) {
             $activeWindow.style.top = newWindowY + 'px';
             $activeWindow.style.left = newWindowX + 'px';
         }
@@ -126,7 +127,7 @@ wpd.popup = (function () {
     }
 
     function removeDragMask() {
-        if(dragInfo != null && dragInfo.dragMaskDiv != null) {
+        if (dragInfo != null && dragInfo.dragMaskDiv != null) {
             dragInfo.dragMaskDiv.removeEventListener('mouseout', dragMouseOut, false);
             dragInfo.dragMaskDiv.removeEventListener('mouseup', dragMouseUp, false);
             dragInfo.dragMaskDiv.removeEventListener('mousemove', dragMouseMove, false);
@@ -136,21 +137,26 @@ wpd.popup = (function () {
         }
     }
 
+    function handleKeydown(e) {
+        if (wpd.keyCodes.isEsc(e.keyCode)) {
+            close($activeWindow.id);
+        }
+    }
+
     return {
         show: show,
         close: close
     };
-
 })();
 
-wpd.busyNote = (function () {
+wpd.busyNote = (function() {
     var noteDiv, isVisible = false;
-    
+
     function show() {
-        if(isVisible) {
+        if (isVisible) {
             return;
         }
-        if(noteDiv == null) {
+        if (noteDiv == null) {
             noteDiv = document.createElement('div');
             noteDiv.id = 'wait';
             noteDiv.innerHTML = '<p align="center">' + wpd.gettext('processing') + '...</p>';
@@ -172,7 +178,7 @@ wpd.busyNote = (function () {
     };
 })();
 
-wpd.messagePopup = (function () {
+wpd.messagePopup = (function() {
     var close_callback;
 
     function show(title, msg, callback) {
@@ -184,7 +190,7 @@ wpd.messagePopup = (function () {
 
     function close() {
         wpd.popup.close('messagePopup');
-        if(close_callback != null) {
+        if (close_callback != null) {
             close_callback();
         }
     }
@@ -195,7 +201,7 @@ wpd.messagePopup = (function () {
     };
 })();
 
-wpd.okCancelPopup = (function () {
+wpd.okCancelPopup = (function() {
     var okCallback, cancelCallback;
 
     function show(title, msg, ok_callback, cancel_callback) {
@@ -227,7 +233,6 @@ wpd.okCancelPopup = (function () {
     };
 })();
 
-wpd.unsupported = function () {
+wpd.unsupported = function() {
     wpd.messagePopup.show(wpd.gettext('unsupported'), wpd.gettext('unsupported-text'));
 };
-

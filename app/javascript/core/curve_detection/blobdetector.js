@@ -1,9 +1,9 @@
 /*
-	WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-	Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+    Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-	This file is part of WebPlotDigitizer.
+    This file is part of WebPlotDigitizer.
 
     WebPlotDigitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -17,8 +17,6 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-
 */
 
 var wpd = wpd || {};
@@ -33,9 +31,15 @@ wpd.BlobDetectorAlgo = class {
 
     getParamList(axes) {
         if (axes != null && axes instanceof wpd.MapAxes) {
-            return [['Min Diameter', 'Units', this._minDia], ['Max Diameter', 'Units', this._maxDia]];
+            return [
+                ['Min Diameter', 'Units', this._minDia],
+                ['Max Diameter', 'Units', this._maxDia]
+            ];
         }
-        return [['Min Diameter', 'Px', this._minDia], ['Max Diameter', 'Px', this._maxDia]];
+        return [
+            ['Min Diameter', 'Px', this._minDia],
+            ['Max Diameter', 'Px', this._maxDia]
+        ];
     }
 
     setParam(index, val) {
@@ -48,15 +52,17 @@ wpd.BlobDetectorAlgo = class {
 
     serialize() {
         return this._wasRun ? {
-            algoType: "BlobDetectorAlgo",
-            minDia: this._minDia,
-            maxDia: this._maxDia
-        } : null;
+                algoType: "BlobDetectorAlgo",
+                minDia: this._minDia,
+                maxDia: this._maxDia
+            } :
+            null;
     }
 
     deserialize(obj) {
         this._minDia = obj.minDia;
         this._maxDia = obj.maxDia;
+        this._wasRun = true;
     }
 
     getParam(index) {
@@ -70,16 +76,10 @@ wpd.BlobDetectorAlgo = class {
             pixelVisited = [],
             blobCount = 0,
             blobs = [],
-            xi, yi,
-            blobPtIndex,
-            bIndex,
-            nxi, nyi,
-            bxi, byi,
-            pcount,
-            dia;
+            xi, yi, blobPtIndex, bIndex, nxi, nyi, bxi, byi, pcount, dia;
 
-        if (dw <= 0 || dh <= 0 || autoDetector.binaryData == null
-            || autoDetector.binaryData.size === 0) {
+        if (dw <= 0 || dh <= 0 || autoDetector.binaryData == null ||
+            autoDetector.binaryData.size === 0) {
             return;
         }
 
@@ -88,15 +88,22 @@ wpd.BlobDetectorAlgo = class {
 
         for (xi = 0; xi < dw; xi++) {
             for (yi = 0; yi < dh; yi++) {
-                if (autoDetector.binaryData.has(yi*dw + xi) && !(pixelVisited[yi*dw + xi] === true)) {
+                if (autoDetector.binaryData.has(yi * dw + xi) &&
+                    !(pixelVisited[yi * dw + xi] === true)) {
 
-                    pixelVisited[yi*dw + xi] = true;
+                    pixelVisited[yi * dw + xi] = true;
 
                     bIndex = blobs.length;
 
                     blobs[bIndex] = {
-                        pixels: [{x: xi, y: yi}],
-                        centroid: {x: xi, y: yi},
+                        pixels: [{
+                            x: xi,
+                            y: yi
+                        }],
+                        centroid: {
+                            x: xi,
+                            y: yi
+                        },
                         area: 1.0,
                         moment: 0.0
                     };
@@ -107,11 +114,12 @@ wpd.BlobDetectorAlgo = class {
                         byi = blobs[bIndex].pixels[blobPtIndex].y;
 
                         for (nxi = bxi - 1; nxi <= bxi + 1; nxi++) {
-                            for(nyi = byi - 1; nyi <= byi + 1; nyi++) {
+                            for (nyi = byi - 1; nyi <= byi + 1; nyi++) {
                                 if (nxi >= 0 && nyi >= 0 && nxi < dw && nyi < dh) {
-                                    if (!(pixelVisited[nyi*dw + nxi] === true) && autoDetector.binaryData.has(nyi*dw + nxi)) {
+                                    if (!(pixelVisited[nyi * dw + nxi] === true) &&
+                                        autoDetector.binaryData.has(nyi * dw + nxi)) {
 
-                                        pixelVisited[nyi*dw + nxi] = true;
+                                        pixelVisited[nyi * dw + nxi] = true;
 
                                         pcount = blobs[bIndex].pixels.length;
 
@@ -120,8 +128,12 @@ wpd.BlobDetectorAlgo = class {
                                             y: nyi
                                         };
 
-                                        blobs[bIndex].centroid.x = (blobs[bIndex].centroid.x*pcount + nxi)/(pcount + 1.0);
-                                        blobs[bIndex].centroid.y = (blobs[bIndex].centroid.y*pcount + nyi)/(pcount + 1.0);
+                                        blobs[bIndex].centroid.x =
+                                            (blobs[bIndex].centroid.x * pcount + nxi) /
+                                            (pcount + 1.0);
+                                        blobs[bIndex].centroid.y =
+                                            (blobs[bIndex].centroid.y * pcount + nyi) /
+                                            (pcount + 1.0);
                                         blobs[bIndex].area = blobs[bIndex].area + 1.0;
                                     }
                                 }
@@ -136,20 +148,23 @@ wpd.BlobDetectorAlgo = class {
         for (bIndex = 0; bIndex < blobs.length; bIndex++) {
             blobs[bIndex].moment = 0;
             for (blobPtIndex = 0; blobPtIndex < blobs[bIndex].pixels.length; blobPtIndex++) {
-                blobs[bIndex].moment = blobs[bIndex].moment
-                    + (blobs[bIndex].pixels[blobPtIndex].x - blobs[bIndex].centroid.x)*(blobs[bIndex].pixels[blobPtIndex].x - blobs[bIndex].centroid.x)
-                    + (blobs[bIndex].pixels[blobPtIndex].y - blobs[bIndex].centroid.y)*(blobs[bIndex].pixels[blobPtIndex].y - blobs[bIndex].centroid.y);
-
+                blobs[bIndex].moment =
+                    blobs[bIndex].moment +
+                    (blobs[bIndex].pixels[blobPtIndex].x - blobs[bIndex].centroid.x) *
+                    (blobs[bIndex].pixels[blobPtIndex].x - blobs[bIndex].centroid.x) +
+                    (blobs[bIndex].pixels[blobPtIndex].y - blobs[bIndex].centroid.y) *
+                    (blobs[bIndex].pixels[blobPtIndex].y - blobs[bIndex].centroid.y);
             }
             if (axes instanceof wpd.MapAxes) {
                 blobs[bIndex].area = plotData.axes.pixelToDataArea(blobs[bIndex].area);
             }
 
-            dia = 2.0*Math.sqrt(blobs[bIndex].area/Math.PI);
+            dia = 2.0 * Math.sqrt(blobs[bIndex].area / Math.PI);
             if (dia <= this._maxDia && dia >= this._minDia) {
                 // add 0.5 pixel offset to shift to the center of the pixels.
-                dataSeries.addPixel(blobs[bIndex].centroid.x + 0.5, blobs[bIndex].centroid.y + 0.5, [blobs[bIndex].area, blobs[bIndex].moment]);
+                dataSeries.addPixel(blobs[bIndex].centroid.x + 0.5, blobs[bIndex].centroid.y + 0.5,
+                    [blobs[bIndex].area, blobs[bIndex].moment]);
             }
         }
-    }    
+    }
 }

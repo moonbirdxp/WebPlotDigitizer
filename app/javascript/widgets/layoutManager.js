@@ -1,9 +1,9 @@
 /*
-	WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-	Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+    Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-	This file is part of WebPlotDigitizer.
+    This file is part of WebPlotDigitizer.
 
     WebPlotDIgitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -17,24 +17,18 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-
 */
 
 // layoutManager.js - manage layout of main sections on the screen.
 var wpd = wpd || {};
-wpd.layoutManager = (function () {
-    var layoutTimer,
-        $graphicsContainer,
-        $sidebarContainer,
-        $sidebarControlsContainer,
-        $mainContainer,
-        $treeContainer;
+wpd.layoutManager = (function() {
+    var layoutTimer, $graphicsContainer, $sidebarContainer, $sidebarControlsContainer,
+        $mainContainer, $treeContainer;
 
     // Redo layout when window is resized
     function adjustLayout() {
-        let windowWidth = parseInt(document.body.offsetWidth,10);
-        let windowHeight = parseInt(document.body.offsetHeight,10);
+        let windowWidth = parseInt(document.body.offsetWidth, 10);
+        let windowHeight = parseInt(document.body.offsetHeight, 10);
 
         $sidebarContainer.style.height = windowHeight + 'px';
         $sidebarControlsContainer.style.height = windowHeight - 280 + 'px';
@@ -57,7 +51,7 @@ wpd.layoutManager = (function () {
         clearTimeout(layoutTimer);
         layoutTimer = setTimeout(adjustLayout, 80);
     }
- 
+
     // Set initial layout. Called right when the app is loaded.
     function initialLayout() {
         // do initial layout and also bind to the window resize event
@@ -67,7 +61,7 @@ wpd.layoutManager = (function () {
         $mainContainer = document.getElementById('mainContainer');
         $treeContainer = document.getElementById('left-side-container');
         adjustLayout();
-         
+
         window.addEventListener('resize', adjustLayoutOnResize, false);
 
         wpd.tree.init();
@@ -77,5 +71,4 @@ wpd.layoutManager = (function () {
         initialLayout: initialLayout,
         getGraphicsViewportSize: getGraphicsViewportSize
     };
-
 })();

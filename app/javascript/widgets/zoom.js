@@ -1,9 +1,9 @@
 /*
-	WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-	Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+    Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-	This file is part of WebPlotDigitizer.
+    This file is part of WebPlotDigitizer.
 
     WebPlotDigitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -16,31 +16,23 @@
     GNU Affero General Public License for more details.
 
     You should have received a copy of the GNU Affero General Public License
-    along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
+    along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.*/
 
 /* Zoomed-in view */
 var wpd = wpd || {};
 wpd.zoomView = (function() {
-    var zCanvas, 
-        zctx,
-        tempCanvas,
-        tctx,
-        zWindowWidth = 250,
+    var zCanvas, zctx, tempCanvas, tctx, zWindowWidth = 250,
         zWindowHeight = 250,
-        $mPosn,
-        pix = [],
-        zoomRatio,
-        crosshairColorText = 'black';
+        $mPosn, pix = [],
+        zoomRatio, crosshairColorText = 'black';
 
     pix[0] = [];
 
     function init() {
 
         zCanvas = document.getElementById('zoomCanvas');
-    	zctx = zCanvas.getContext('2d');
-	    tempCanvas = document.createElement('canvas');
+        zctx = zCanvas.getContext('2d');
+        tempCanvas = document.createElement('canvas');
         tctx = tempCanvas.getContext('2d');
 
         $mPosn = document.getElementById('mousePosition');
@@ -53,27 +45,27 @@ wpd.zoomView = (function() {
     function drawCrosshair() {
         var zCrossHair = document.getElementById("zoomCrossHair");
         var zchCtx = zCrossHair.getContext("2d");
-        
+
         zCrossHair.width = zCrossHair.width;
 
-        if(crosshairColorText === 'black') {
+        if (crosshairColorText === 'black') {
             zchCtx.strokeStyle = "rgba(0,0,0,1)";
-        } else if(crosshairColorText === 'red') {
+        } else if (crosshairColorText === 'red') {
             zchCtx.strokeStyle = "rgba(255,0,0,1)";
-        } else if(crosshairColorText === 'yellow') {
+        } else if (crosshairColorText === 'yellow') {
             zchCtx.strokeStyle = "rgba(255,255,0,1)";
         } else {
             zchCtx.strokeStyle = "rgba(0,0,0,1)";
         }
 
         zchCtx.beginPath();
-        zchCtx.moveTo(zWindowWidth/2, 0);
-        zchCtx.lineTo(zWindowWidth/2, zWindowHeight);
-        zchCtx.moveTo(0, zWindowHeight/2);
-        zchCtx.lineTo(zWindowWidth, zWindowHeight/2);
+        zchCtx.moveTo(zWindowWidth / 2, 0);
+        zchCtx.lineTo(zWindowWidth / 2, zWindowHeight);
+        zchCtx.moveTo(0, zWindowHeight / 2);
+        zchCtx.lineTo(zWindowWidth, zWindowHeight / 2);
         zchCtx.stroke();
     }
- 
+
     function setZoomRatio(zratio) {
         zoomRatio = zratio;
     }
@@ -83,24 +75,23 @@ wpd.zoomView = (function() {
     }
 
     function getSize() {
-         return {
+        return {
             width: zWindowWidth,
             height: zWindowHeight
         };
-
     }
 
     function setZoomImage(imgData, x0, y0, zwidth, zheight) {
-        tempCanvas.width = zwidth/zoomRatio;
-        tempCanvas.height = zheight/zoomRatio;
+        tempCanvas.width = zwidth / zoomRatio;
+        tempCanvas.height = zheight / zoomRatio;
         tctx.putImageData(imgData, 0, 0);
         zCanvas.width = zCanvas.width;
         zctx.drawImage(tempCanvas, x0, y0, zwidth, zheight);
     }
 
     function setCoords(imageX, imageY) {
-        const axes = wpd.tree.getActiveAxes();        
-        if(axes != null) {            
+        const axes = wpd.tree.getActiveAxes();
+        if (axes != null) {
             $mPosn.innerHTML = axes.pixelToLiveString(imageX, imageY);
         } else {
             $mPosn.innerHTML = imageX.toFixed(2) + ', ' + imageY.toFixed(2);
@@ -131,4 +122,3 @@ wpd.zoomView = (function() {
         applySettings: applySettings
     };
 })();
-

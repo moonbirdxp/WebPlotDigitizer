@@ -1,7 +1,7 @@
 /*
    WebPlotDigitizer - http://arohatgi.info/WebPlotdigitizer
 
-   Copyright 2010-2017 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+   Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
    This file is part of WebPlotDigitizer.
 
@@ -22,48 +22,34 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 )
 
-// ServerSettings - global server settings
-type ServerSettings struct {
-	Hostname string
-	HTTPPort string
-	LogUsage bool
-	LogDir   string
-}
-
 func main() {
 	// read server settings
-	file, err := ioutil.ReadFile("settings.json")
+	settings, err := ReadServerSettings("settings.json")
 	if err != nil {
 		log.Fatal("Error reading setting.json")
 	}
-	var settings ServerSettings
-	json.Unmarshal(file, &settings)
 
 	// host the ui frontend
 	fs := WPDFileSystem{http.Dir("../app")}
 	http.Handle("/", http.FileServer(fs))
 
-	// internal backend API
-	http.HandleFunc("/download/text", func(w http.ResponseWriter, r *http.Request) {
-		HandleDownload(w, r)
-	})
+	// logging
+	logging, err := InitLogging(settings)
+	if err != nil {
+		log.Fatal("Error enabling logging: ", err)
+	}
+	http.Handle("/log", logging)
 
-	// log
-	http.HandleFunc("/log", func(w http.ResponseWriter, r *http.Request) {
-		// collect posted json data
-		if r.Method == "POST" {
-			CollectLogDataFunc(w, r, settings)
-		} else if r.Method == "GET" {
-			fmt.Fprintf(w, "%t", settings.LogUsage)
-		}
-	})
+	// data storage
+	storage, err := InitStorage(settings)
+	if err != nil {
+		log.Fatal(err)
+	}
+	http.Handle("/storage/", storage)
 
 	// start the server
 	addr := settings.Hostname + ":" + settings.HTTPPort

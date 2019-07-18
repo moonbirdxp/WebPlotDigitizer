@@ -1,7 +1,7 @@
 QUnit.module("Date/Time Parsing Tests");
 QUnit.test("Date Format", function(assert) {
     // yyyy/mm
-    formatStr = wpd.dateConverter.getFormatString("2017/10");
+    let formatStr = wpd.dateConverter.getFormatString("2017/10");
     assert.equal(formatStr, "yyyy/mm", "yyyy/mm ok");
 
     // yyyy/mm/dd
@@ -51,12 +51,12 @@ QUnit.test("Date Value", function(assert) {
 });
 
 QUnit.test("Date Input Parser", function(assert) {
-    let ip = new wpd.InputParser();    
+    let ip = new wpd.InputParser();
     ip.parse("2017/10/11 5:10:16");
     assert.equal(ip.isValid, true, "isValid with date ok");
     assert.equal(ip.isDate, true, "isDate with date ok");
     assert.equal(ip.formatting, "yyyy/mm/dd hh:ii:ss", "formatting with date ok");
-    
+
     ip.parse("2017");
     assert.equal(ip.isValid, true, "isValid without date ok");
     assert.equal(ip.isDate, false, "isDate without date ok");

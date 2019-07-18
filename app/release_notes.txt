@@ -1,14 +1,27 @@
 RELEASE NOTES
+Version 4.3
+===========
+To be released
+
+New Features:
+ - Allow loading static projects from the server using a project ID param in the URL
 
 Version 4.2
 ===========
-Coming soon!
+April 7, 2019
 
 New Features:
- - Save and resume auto-detection algorithm settings in the project file (per dataset). 
+ - Save and resume auto-detection algorithm settings along with masks in the project file (per dataset). 
+ - Crop images before digitization.
+ - Undo/Redo management system (used only for cropping images at the moment)
+ - Initial ability to run digitization on multiple images via NodeJS command-line
 
 Bug fixes:
  - Improve X Step with Interpolation algorithm for log-scale charts
+ - Improved unit test coverage
+
+Misc:
+ - Minor UI tweaks for mask creation
 
 Version 4.1
 ===========

@@ -1,9 +1,9 @@
 /*
-	WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-	Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+    Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-	This file is part of WebPlotDigitizer.
+    This file is part of WebPlotDigitizer.
 
     WebPlotDigitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -17,8 +17,6 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-
 */
 
 var wpd = wpd || {};
@@ -32,7 +30,7 @@ wpd.measurementModes = {
         sidebarId: 'measure-distances-sidebar',
         init: function() {
             let plotData = wpd.appData.getPlotData();
-            if(plotData.getMeasurementsByType(wpd.DistanceMeasurement).length == 0) {
+            if (plotData.getMeasurementsByType(wpd.DistanceMeasurement).length == 0) {
                 plotData.addMeasurement(new wpd.DistanceMeasurement());
             }
         },
@@ -57,7 +55,7 @@ wpd.measurementModes = {
             let plotData = wpd.appData.getPlotData();
             let ms = plotData.getMeasurementsByType(wpd.DistanceMeasurement)[0];
             let axesColl = plotData.getAxesColl();
-            if(axIdx == -1) {
+            if (axIdx == -1) {
                 plotData.setAxesForMeasurement(ms, null);
             } else {
                 plotData.setAxesForMeasurement(ms, axesColl[axIdx]);
@@ -73,7 +71,7 @@ wpd.measurementModes = {
         sidebarId: 'measure-angles-sidebar',
         init: function() {
             let plotData = wpd.appData.getPlotData();
-            if(plotData.getMeasurementsByType(wpd.AngleMeasurement).length == 0) {
+            if (plotData.getMeasurementsByType(wpd.AngleMeasurement).length == 0) {
                 plotData.addMeasurement(new wpd.AngleMeasurement());
             }
         },
@@ -98,7 +96,7 @@ wpd.measurementModes = {
         sidebarId: 'measure-area-sidebar',
         init: function() {
             let plotData = wpd.appData.getPlotData();
-            if(plotData.getMeasurementsByType(wpd.AreaMeasurement).length == 0) {
+            if (plotData.getMeasurementsByType(wpd.AreaMeasurement).length == 0) {
                 plotData.addMeasurement(new wpd.AreaMeasurement());
             }
         },
@@ -123,7 +121,7 @@ wpd.measurementModes = {
             let plotData = wpd.appData.getPlotData();
             let ms = plotData.getMeasurementsByType(wpd.AreaMeasurement)[0];
             let axesColl = plotData.getAxesColl();
-            if(axIdx == -1) {
+            if (axIdx == -1) {
                 plotData.setAxesForMeasurement(ms, null);
             } else {
                 plotData.setAxesForMeasurement(ms, axesColl[axIdx]);
@@ -133,8 +131,7 @@ wpd.measurementModes = {
     }
 };
 
-wpd.measurement = (function () {
-
+wpd.measurement = (function() {
     var activeMode;
 
     function start(mode) {
@@ -150,12 +147,12 @@ wpd.measurement = (function () {
 
     function addItem() {
         wpd.graphicsWidget.setRepainter(new wpd.MeasurementRepainter(activeMode));
-        wpd.graphicsWidget.setTool(new wpd.AddMeasurementTool(activeMode));        
+        wpd.graphicsWidget.setTool(new wpd.AddMeasurementTool(activeMode));
     }
 
     function deleteItem() {
         wpd.graphicsWidget.setRepainter(new wpd.MeasurementRepainter(activeMode));
-        wpd.graphicsWidget.setTool(new wpd.DeleteMeasurementTool(activeMode));        
+        wpd.graphicsWidget.setTool(new wpd.DeleteMeasurementTool(activeMode));
     }
 
     function clearAll() {

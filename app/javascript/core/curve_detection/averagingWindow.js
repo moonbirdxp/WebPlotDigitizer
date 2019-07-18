@@ -1,9 +1,9 @@
 /*
-    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-    Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-    This file is part of WebPlotDigitizer.
+This file is part of WebPlotDigitizer.
 
     WebPlotDigitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -17,10 +17,7 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-
 */
-
 
 var wpd = wpd || {};
 
@@ -33,13 +30,16 @@ wpd.AveragingWindowAlgo = class {
     }
 
     getParamList(axes) {
-        return [['ΔX', 'Px', this._xStep], ['ΔY', 'Px', this._yStep]];
+        return [
+            ['ΔX', 'Px', this._xStep],
+            ['ΔY', 'Px', this._yStep]
+        ];
     }
 
     setParam(index, val) {
-        if(index === 0) {
+        if (index === 0) {
             this._xStep = val;
-        } else if(index === 1) {
+        } else if (index === 1) {
             this._yStep = val;
         }
     }
@@ -50,26 +50,24 @@ wpd.AveragingWindowAlgo = class {
 
     serialize() {
         return this._wasRun ? {
-            algoType: "AveragingWindowAlgo",
-            xStep: this._xStep,
-            yStep: this._yStep
-        } : null;
+                algoType: "AveragingWindowAlgo",
+                xStep: this._xStep,
+                yStep: this._yStep
+            } :
+            null;
     }
 
     deserialize(obj) {
         this._xStep = obj.xStep;
         this._yStep = obj.yStep;
+        this._wasRun = true;
     }
 
     run(autoDetector, dataSeries, axes) {
         this._wasRun = true;
-        let algoCore = new wpd.AveragingWindowCore(autoDetector.binaryData,
-                                                   autoDetector.imageHeight,
-                                                   autoDetector.imageWidth,
-                                                   this._xStep,
-                                                   this._yStep,
-                                                   dataSeries);
+        let algoCore = new wpd.AveragingWindowCore(
+            autoDetector.binaryData, autoDetector.imageHeight, autoDetector.imageWidth, this._xStep,
+            this._yStep, dataSeries);
         algoCore.run();
-    }   
+    }
 };
-

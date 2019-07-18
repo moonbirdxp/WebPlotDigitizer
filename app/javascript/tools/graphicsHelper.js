@@ -1,9 +1,9 @@
 /*
-	WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-	Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+    Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-	This file is part of WebPlotDigitizer.
+    This file is part of WebPlotDigitizer.
 
     WebPlotDigitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -17,14 +17,11 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-
 */
 
 var wpd = wpd || {};
 
-wpd.graphicsHelper = (function () {
-
+wpd.graphicsHelper = (function() {
     // imagePx - relative to original image
     // fillStyle - e.g. "rgb(200,0,0)"
     // label - e.g. "Bar 0"
@@ -35,7 +32,7 @@ wpd.graphicsHelper = (function () {
             labelWidth,
             imageHeight = wpd.graphicsWidget.getImageSize().height;
 
-        if(label != null) {
+        if (label != null) {
             // Display Data Canvas Layer
             ctx.dataCtx.font = "15px sans-serif";
             labelWidth = ctx.dataCtx.measureText(label).width;
@@ -47,7 +44,7 @@ wpd.graphicsHelper = (function () {
             ctx.oriDataCtx.fillStyle = fillStyle;
 
             // Switch for both canvases
-            switch(position){
+            switch (position) {
                 case "N":
                 case "n":
                     ctx.dataCtx.fillRect(screenPx.x - 13, screenPx.y - 24, labelWidth + 5, 35);
@@ -64,7 +61,8 @@ wpd.graphicsHelper = (function () {
                     break;
                 case "W":
                 case "w":
-                    ctx.dataCtx.fillRect(screenPx.x - labelWidth - 10, screenPx.y - 16, labelWidth + 17, 26);
+                    ctx.dataCtx.fillRect(screenPx.x - labelWidth - 10, screenPx.y - 16, labelWidth + 17,
+                        26);
                     ctx.dataCtx.fillStyle = fillStyle;
                     ctx.dataCtx.fillText(label, screenPx.x - labelWidth - 7, screenPx.y + 5);
                     ctx.oriDataCtx.fillText(label, imagePx.x - labelWidth - 7, imagePx.y + 5);
@@ -81,7 +79,7 @@ wpd.graphicsHelper = (function () {
         ctx.dataCtx.beginPath();
         ctx.dataCtx.fillStyle = fillStyle;
         ctx.dataCtx.strokeStyle = "rgb(255, 255, 255)";
-        ctx.dataCtx.arc(screenPx.x, screenPx.y, 4, 0, 2.0*Math.PI, true);
+        ctx.dataCtx.arc(screenPx.x, screenPx.y, 4, 0, 2.0 * Math.PI, true);
         ctx.dataCtx.fill();
         ctx.dataCtx.stroke();
 
@@ -89,13 +87,13 @@ wpd.graphicsHelper = (function () {
         ctx.oriDataCtx.beginPath();
         ctx.oriDataCtx.fillStyle = fillStyle;
         ctx.oriDataCtx.strokeStyle = "rgb(255, 255, 255)";
-        ctx.oriDataCtx.arc(imagePx.x, imagePx.y, imageHeight > 1500 ? 4 : 2, 0, 2.0*Math.PI, true);
+        ctx.oriDataCtx.arc(imagePx.x, imagePx.y, imageHeight > 1500 ? 4 : 2, 0, 2.0 * Math.PI,
+            true);
         ctx.oriDataCtx.fill();
         ctx.oriDataCtx.stroke();
     }
 
     return {
-        drawPoint : drawPoint
+        drawPoint: drawPoint
     };
-
 })();

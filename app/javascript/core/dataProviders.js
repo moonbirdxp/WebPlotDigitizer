@@ -1,9 +1,9 @@
 /*
-	WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
+    WebPlotDigitizer - https://automeris.io/WebPlotDigitizer
 
-	Copyright 2010-2018 Ankit Rohatgi <ankitrohatgi@hotmail.com>
+    Copyright 2010-2019 Ankit Rohatgi <ankitrohatgi@hotmail.com>
 
-	This file is part of WebPlotDigitizer.
+    This file is part of WebPlotDigitizer.
 
     WebPlotDIgitizer is free software: you can redistribute it and/or modify
     it under the terms of the GNU Affero General Public License as published by
@@ -17,14 +17,11 @@
 
     You should have received a copy of the GNU Affero General Public License
     along with WebPlotDigitizer.  If not, see <http://www.gnu.org/licenses/>.
-
-
 */
 
 var wpd = wpd || {};
 
 wpd.plotDataProvider = (function() {
-
     let _ds = null;
 
     function setDataSource(ds) {
@@ -34,7 +31,7 @@ wpd.plotDataProvider = (function() {
     function getData() {
         var axes = wpd.appData.getPlotData().getAxesForDataset(_ds);
 
-        if(axes instanceof wpd.BarAxes) {
+        if (axes instanceof wpd.BarAxes) {
             return getBarAxesData(_ds, axes);
         } else {
             return getGeneralAxesData(_ds, axes);
@@ -47,19 +44,17 @@ wpd.plotDataProvider = (function() {
             rawData = [],
             isFieldSortable = [],
             rowi, coli,
-            dataPt,
-            transformedDataPt,
-            lab;
+            dataPt, transformedDataPt, lab;
 
         for (rowi = 0; rowi < dataSeries.getCount(); rowi++) {
-            
+
             dataPt = dataSeries.getPixel(rowi);
             transformedDataPt = axes.pixelToData(dataPt.x, dataPt.y);
-            
+
             rawData[rowi] = [];
-            
+
             // metaData[0] should be the label:
-            if(dataPt.metadata == null) {
+            if (dataPt.metadata == null) {
                 lab = "Bar" + rowi;
             } else {
                 lab = dataPt.metadata[0];
@@ -79,7 +74,7 @@ wpd.plotDataProvider = (function() {
             rawData: rawData,
             allowConnectivity: false,
             connectivityFieldIndices: [],
-            isFieldSortable: isFieldSortable            
+            isFieldSortable: isFieldSortable
         };
     }
 
@@ -91,22 +86,18 @@ wpd.plotDataProvider = (function() {
             connectivityFieldIndices = [],
             rawData = [],
             isFieldSortable = [],
-            rowi,
-            coli,
-            pt,
-            ptData,
-            metadi,
+            rowi, coli, pt, ptData, metadi,
             hasMetadata = dataSeries.hasMetadata(),
             metaKeys = dataSeries.getMetadataKeys(),
             metaKeyCount = hasMetadata === true ? metaKeys.length : 0,
             ptmetadata;
-        
-        for(rowi = 0; rowi < dataSeries.getCount(); rowi++) {
+
+        for (rowi = 0; rowi < dataSeries.getCount(); rowi++) {
 
             pt = dataSeries.getPixel(rowi);
             ptData = axes.pixelToData(pt.x, pt.y);
             rawData[rowi] = [];
-            
+
             // transformed coordinates
             for (coli = 0; coli < ptData.length; coli++) {
                 rawData[rowi][coli] = ptData[coli];
@@ -124,18 +115,18 @@ wpd.plotDataProvider = (function() {
         }
 
         fields = axes.getAxesLabels();
-        if(hasMetadata) {
+        if (hasMetadata) {
             fields = fields.concat(metaKeys);
         }
 
-        for(coli = 0; coli < fields.length; coli++) {
-            if(coli < axes.getDimensions()) {
+        for (coli = 0; coli < fields.length; coli++) {
+            if (coli < axes.getDimensions()) {
                 connectivityFieldIndices[coli] = coli;
-                if(axes.isDate != null && axes.isDate(coli)) {
+                if (axes.isDate != null && axes.isDate(coli)) {
                     fieldDateFormat[coli] = axes.getInitialDateFormat(coli);
                 }
             }
-            
+
             isFieldSortable[coli] = true; // all fields are sortable
         }
 
@@ -156,7 +147,6 @@ wpd.plotDataProvider = (function() {
 })();
 
 wpd.measurementDataProvider = (function() {
-
     let _ms = null;
 
     function setDataSource(ms) {
@@ -172,26 +162,26 @@ wpd.measurementDataProvider = (function() {
             axes = plotData.getAxesForMeasurement(_ms),
             isMap = axes != null && (axes instanceof wpd.MapAxes),
             conni;
-        
+
         if (_ms instanceof wpd.DistanceMeasurement) {
-            for(conni = 0; conni < _ms.connectionCount(); conni++) {
+            for (conni = 0; conni < _ms.connectionCount(); conni++) {
                 rawData[conni] = [];
                 rawData[conni][0] = 'Dist' + conni;
-                if(isMap) {
+                if (isMap) {
                     rawData[conni][1] = axes.pixelToDataDistance(_ms.getDistance(conni));
                 } else {
                     rawData[conni][1] = _ms.getDistance(conni);
                 }
             }
-            
+
             fields = ['Label', 'Distance'];
             isFieldSortable = [false, true];
 
         } else if (_ms instanceof wpd.AngleMeasurement) {
-            
-            for(conni = 0; conni < _ms.connectionCount(); conni++) {
+
+            for (conni = 0; conni < _ms.connectionCount(); conni++) {
                 rawData[conni] = [];
-                rawData[conni][0] = 'Theta'+ conni;
+                rawData[conni][0] = 'Theta' + conni;
                 rawData[conni][1] = _ms.getAngle(conni);
             }
 
@@ -199,17 +189,17 @@ wpd.measurementDataProvider = (function() {
             isFieldSortable = [false, true];
 
         } else if (_ms instanceof wpd.AreaMeasurement) {
-            
-            for(conni = 0; conni < _ms.connectionCount(); conni++) {
+
+            for (conni = 0; conni < _ms.connectionCount(); conni++) {
                 rawData[conni] = [];
-                rawData[conni][0] = 'Poly'+ conni;
-                if(isMap) {
+                rawData[conni][0] = 'Poly' + conni;
+                if (isMap) {
                     rawData[conni][1] = axes.pixelToDataArea(_ms.getArea(conni));
-                    rawData[conni][2] = axes.pixelToDataDistance(_ms.getPerimeter(conni));    
+                    rawData[conni][2] = axes.pixelToDataDistance(_ms.getPerimeter(conni));
                 } else {
                     rawData[conni][1] = _ms.getArea(conni);
                     rawData[conni][2] = _ms.getPerimeter(conni);
-                }                
+                }
             }
 
             fields = ['Label', 'Area', 'Perimeter'];
@@ -226,7 +216,7 @@ wpd.measurementDataProvider = (function() {
         };
     }
 
-    return {        
+    return {
         getData: getData,
         setDataSource: setDataSource
     };
