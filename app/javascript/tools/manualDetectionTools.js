@@ -40,12 +40,12 @@ wpd.ManualSelectionTool = (function() {
                 }
                 pointLabel = axes.dataPointsLabelPrefix + dataset.getCount();
                 dataset.addPixel(imagePos.x, imagePos.y, [pointLabel]);
-                wpd.graphicsHelper.drawPoint(imagePos, "rgb(200,0,0)", pointLabel);
+                wpd.graphicsHelper.drawPoint(imagePos, dataset.colorRGB.toRGBString(), pointLabel);
 
             } else {
 
                 dataset.addPixel(imagePos.x, imagePos.y);
-                wpd.graphicsHelper.drawPoint(imagePos, "rgb(200,0,0)");
+                wpd.graphicsHelper.drawPoint(imagePos, dataset.colorRGB.toRGBString());
             }
 
             wpd.graphicsWidget.updateZoomOnEvent(ev);
@@ -122,61 +122,92 @@ wpd.DeleteDataPointTool = (function() {
     return Tool;
 })();
 
-wpd.DataPointsRepainter = (function() {
-    var Painter = function(axes, dataset) {
-        var drawPoints = function() {
-            var dindex, imagePos, fillStyle, isSelected, mkeys = dataset.getMetadataKeys(),
-                hasLabels = false,
-                pointLabel;
+wpd.MultipltDatasetRepainter = class {
+    constructor(axesList, datasetList) {
+        this.painterName = "multipleDatasetsRepainter";
+        this._datasetList = datasetList;
+        this._axesList = axesList;
 
-            if (axes == null) {
-                return; // this can happen when removing widgets when a new file is loaded:
-            }
+        // TODO: for each dataset, create a separate DataPointsRepainter
+        this._datasetRepainters = [];
+        for (let [dsIdx, ds] of datasetList.entries()) {
+            let dsAxes = axesList[dsIdx];
+            this._datasetRepainters.push(new wpd.DataPointsRepainter(dsAxes, ds));
+        }
+    }
 
-            if (axes.dataPointsHaveLabels && mkeys != null && mkeys[0] === 'Label') {
-                hasLabels = true;
-            }
+    drawPoints() {
+        for (let dsRepainter of this._datasetRepainters) {
+            dsRepainter.drawPoints();
+        }
+    }
 
-            for (dindex = 0; dindex < dataset.getCount(); dindex++) {
-                imagePos = dataset.getPixel(dindex);
-                isSelected = dataset.getSelectedPixels().indexOf(dindex) >= 0;
+    onAttach() {
+        wpd.graphicsWidget.resetData();
+        this.drawPoints();
+    }
 
-                if (isSelected) {
-                    fillStyle = "rgb(0,200,0)";
-                } else {
-                    fillStyle = "rgb(200,0,0)";
-                }
+    onRedraw() {
+        this.drawPoints();
+    }
 
-                if (hasLabels) {
-                    pointLabel = imagePos.metadata[0];
-                    if (pointLabel == null) {
-                        pointLabel = axes.dataPointsLabelPrefix + dindex;
-                    }
-                    wpd.graphicsHelper.drawPoint(imagePos, fillStyle, pointLabel);
-                } else {
-                    wpd.graphicsHelper.drawPoint(imagePos, fillStyle);
-                }
-            }
-        };
+    onForcedRedraw() {
+        wpd.graphicsWidget.resetData();
+        this.drawPoints();
+    }
+};
 
+wpd.DataPointsRepainter = class {
+    constructor(axes, dataset) {
+        this._axes = axes;
+        this._dataset = dataset;
         this.painterName = 'dataPointsRepainter';
+    }
 
-        this.onAttach = function() {
-            wpd.graphicsWidget.resetData();
-            drawPoints();
-        };
+    drawPoints() {
+        let mkeys = this._dataset.getMetadataKeys();
+        let hasLabels = false;
 
-        this.onRedraw = function() {
-            drawPoints();
-        };
+        if (this._axes == null) {
+            return; // this can happen when removing widgets when a new file is loaded:
+        }
 
-        this.onForcedRedraw = function() {
-            wpd.graphicsWidget.resetData();
-            drawPoints();
-        };
-    };
-    return Painter;
-})();
+        if (this._axes.dataPointsHaveLabels && mkeys != null && mkeys[0] === 'Label') {
+            hasLabels = true;
+        }
+
+        for (let dindex = 0; dindex < this._dataset.getCount(); dindex++) {
+            let imagePos = this._dataset.getPixel(dindex);
+            let isSelected = this._dataset.getSelectedPixels().indexOf(dindex) >= 0;
+
+            let fillStyle = isSelected ? "rgb(0,200,0)" : this._dataset.colorRGB.toRGBString();
+
+            if (hasLabels) {
+                let pointLabel = imagePos.metadata[0];
+                if (pointLabel == null) {
+                    pointLabel = this._axes.dataPointsLabelPrefix + dindex;
+                }
+                wpd.graphicsHelper.drawPoint(imagePos, fillStyle, pointLabel);
+            } else {
+                wpd.graphicsHelper.drawPoint(imagePos, fillStyle);
+            }
+        }
+    }
+
+    onAttach() {
+        wpd.graphicsWidget.resetData();
+        this.drawPoints();
+    }
+
+    onRedraw() {
+        this.drawPoints();
+    }
+
+    onForcedRedraw() {
+        wpd.graphicsWidget.resetData();
+        this.drawPoints();
+    }
+};
 
 wpd.AdjustDataPointTool = (function() {
     var Tool = function(axes, dataset) {

@@ -34,6 +34,7 @@ wpd.Dataset = class {
         // public:
         this.name = "Defaut Dataset";
         this.variableNames = ['x', 'y'];
+        this.colorRGB = new wpd.Color(200, 0, 0);
     }
 
     hasMetadata() {
